@@ -6,8 +6,15 @@
     <body>
         <p>There are <span th:text="${list.size()}">100</span> users before you:</p>
 
+
         <ul th:if="${list != null}">
-            <!-- Using utext allows XSS -->
+            <!--
+            *** A3 Cross-Site Scripting (XSS) ***
+            Using utext in the template means that supplied input is not escaped and
+            therefore certain inputs will be treated as active content in the browser.
+
+            Fix: Change text to text
+            -->
             <li th:each="item : ${list}">
                 <span th:utext="${item}"></span>
             </li>

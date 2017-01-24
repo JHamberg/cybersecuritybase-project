@@ -78,7 +78,6 @@ public class WebController {
 
         // Fetch and format all past appointments
         ResultSet resultSet = db.getUsers();
-        ResultSet resultSet = db.fetch("SELECT * from Users");
         if(resultSet == null){
             return "error";
         }
