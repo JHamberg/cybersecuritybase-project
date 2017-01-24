@@ -4,16 +4,16 @@ import javax.persistence.Entity;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
 @Entity
-public class Signup extends AbstractPersistable<Long> {
+public class WebUser extends AbstractPersistable<Long> {
 
     private String name;
     private String address;
 
-    public Signup() {
+    public WebUser() {
         super();
     }
 
-    public Signup(String name, String address) {
+    public WebUser(String name, String address) {
         this();
         this.name = name;
         this.address = address;

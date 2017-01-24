@@ -1,11 +1,17 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
     <head>
-        <title>Thank you!</title>
+        <title>Registered!</title>
     </head>
     <body>
 
-        <h1>Thank you! You have been signed up to the event!</h1>
-
+        <h1>Thank you! There are <span th:text="${list.size()}">100</span> users before you:</h1>
+        <ul th:if="${list != null}">
+            <!-- Using utext allows XSS -->
+            <li th:each="item : ${list}">
+                <span th:utext="${item}"></span>
+            </li>
+            <li th:utext="${latest}"></li>
+        </ul>
     </body>
 </html>
