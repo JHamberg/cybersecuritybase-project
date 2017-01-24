@@ -20,9 +20,24 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        // no real security at the moment
-        http.authorizeRequests()
-                .anyRequest().permitAll();
+        // *** A8-Cross-Site Request Forgery ***
+        // This allows foreign sites to perform requests as if they
+        // we performed by the user, leading to potentially unwanted
+        // records and/or data erasure
+
+        // Fix: Remove this line and line 17 in WebConfig.java.
+        http.csrf().disable();
+
+
+        // *** A5 Security misconfiguration ***
+        // This is an unnecessary feature page which exposes underlying
+        // filesystem structure and potentially lets user insert scripts
+        // and queries on the database.
+
+        // Fix: Remove the following line and uncomment the ones below it.
+        http.authorizeRequests().anyRequest().permitAll();
+        // http.authorizeRequests().antMatchers("/form", "/queue", "/appointment", "/redirect").permitAll();
+        // http.authorizeRequests().antMatchers("/h2-console").denyAll();
     }
 
     @Autowired

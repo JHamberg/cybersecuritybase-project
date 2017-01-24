@@ -4,14 +4,13 @@
         <title>Registered!</title>
     </head>
     <body>
+        <p>There are <span th:text="${list.size()}">100</span> users before you:</p>
 
-        <h1>Thank you! There are <span th:text="${list.size()}">100</span> users before you:</h1>
         <ul th:if="${list != null}">
             <!-- Using utext allows XSS -->
             <li th:each="item : ${list}">
                 <span th:utext="${item}"></span>
             </li>
-            <li th:utext="${latest}"></li>
         </ul>
     </body>
 </html>

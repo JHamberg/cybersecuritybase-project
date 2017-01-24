@@ -5,8 +5,6 @@ import sec.project.Constants;
 
 import java.io.FileReader;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Jonatan on 24.1.2017.
@@ -26,25 +24,16 @@ public class Database {
 
     private Database(){
         try {
-            Connection connection = DriverManager.getConnection(Constants.DB_ADDRESS, "sa", "");
+            openConnection();
             RunScript.execute(connection, new FileReader("sql/database-schema.sql"));
             RunScript.execute(connection, new FileReader("sql/database-import.sql"));
-            ResultSet resultSet = connection.createStatement().executeQuery("SELECT * FROM WebUsers");
-
-            System.out.println("Initialized database with the following users:");
-            while(resultSet.next()){
-                String id = resultSet.getString("id");
-                String name = resultSet.getString("name");
-                System.out.println(id + "\t" + name + "\t");
-            }
-            resultSet.close();
             closeConnection();
         } catch (Exception e) {
             System.out.println("Exception occurred " + e);
         }
     }
 
-    private boolean openConnection(){
+    public boolean openConnection(){
         try {
             connection = DriverManager.getConnection(Constants.DB_ADDRESS, "sa", "");
             return true;
@@ -54,7 +43,7 @@ public class Database {
         }
     }
 
-    private void closeConnection(){
+    public void closeConnection(){
         try {
             connection.close();
         } catch (SQLException e) {
@@ -62,39 +51,66 @@ public class Database {
         }
     }
 
-    public void execute(String query){
+    public int insert(String query){
         try{
-            if(openConnection()){
-                connection.createStatement().executeUpdate(query);
-            }
-            closeConnection();
+            PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            statement.executeUpdate();
+            ResultSet keys = statement.getGeneratedKeys();
+            keys.next();
+            int key = keys.getInt(1);
+            keys.close();
+            statement.close();
+            return key;
         } catch (Exception e){
             e.printStackTrace();
         }
+        return -1;
     }
 
-    public List<String> fetch(String query){
-        List<String> results = new ArrayList<>();
+    public int safeInsert(String name, String reason) throws SQLException {
+        try {
+            String query = "INSERT INTO Users (name, reason) VALUES (?, ?)";
+            // Enable these options to mitigate vulnerability A4
+            // String id = UUID.randomUUID().toString();
+            // String query = "INSERT INTO WebUsers (id, name, reason) VALUES (?, ?, ?)";
+            PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            // statement.setString(1, id);
+            // statement.setString(2, name);
+            // statement.setString(3, reason);
+            statement.setString(1, name);
+            statement.setString(2, reason);
+            statement.executeUpdate();
+
+            ResultSet keys = statement.getGeneratedKeys();
+            keys.next();
+            int key = keys.getInt(1);
+            keys.close();
+            statement.close();
+            return key;
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    public ResultSet getUser(int id){
         try{
-            if(openConnection()){
-                ResultSet resultSet = connection.createStatement().executeQuery(query);
-                ResultSetMetaData metaData = resultSet.getMetaData();
-                int columns = metaData.getColumnCount();
-                while(resultSet.next()){
-                    StringBuilder properties = new StringBuilder();
-                    for(int i=1; i <= columns; i++){
-                        System.out.println("Column : " + i);
-                        if(!Constants.SENSITIVE_FIELD_IDS.contains(i)){
-                            System.out.println("string: " + resultSet.getString(i));
-                            properties.append("\t").append(resultSet.getString(i));
-                        }
-                    }
-                    results.add(properties.toString());
-                }
-                return results;
-            }
-            closeConnection();
-        } catch (Exception e){
+            String query = "SELECT * FROM Users WHERE id = ?";
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1, id);
+            statement.executeUpdate();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public ResultSet getUsers(){
+        try{
+            String query = "SELECT * FROM Users";
+            return connection.createStatement().executeQuery(query);
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;

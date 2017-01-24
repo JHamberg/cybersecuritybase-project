@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Appointment details</title>
+</head>
+<body>
+
+<h1>Appointment details</h1>
+<h4>Please save the information on this page or bookmark it.</h4>
+<p>Appointment Id: <span th:text="${id}">Loading..</span></p>
+<p>Name: <span th:text="${name}">Loading..</span></p>
+<p>Reason: <span th:text="${reason}">Loading..</span></p>
+<a href="/queue">View queue</a> | <a href="/form">Create a new appointment</a>
+</body>
+</html>
