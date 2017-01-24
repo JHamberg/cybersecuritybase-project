@@ -85,9 +85,7 @@ public class WebController {
         while(resultSet.next()){
             StringBuilder properties = new StringBuilder();
             for(int i=1; i <= columns; i++){
-                System.out.println("Column : " + i);
                 if(!Constants.SENSITIVE_FIELD_IDS.contains(i)){
-                    System.out.println("string: " + resultSet.getString(i));
                     properties.append("\t").append(resultSet.getString(i));
                 }
             }
@@ -115,7 +113,7 @@ public class WebController {
         // User can exploit this property by injecting his own SQL such as '); DROP TABLE Users;--.
 
         // Fix: Remove the following line and uncomment the line below it
-        int primaryKey = db.insert("INSERT INTO WebUsers (name, reason) VALUES ('" + name  + "', '"+ reason +"')");
+        int primaryKey = db.insert("INSERT INTO Users (name, reason) VALUES ('" + name  + "', '"+ reason +"')");
         //int primaryKey = db.safeInsert(name, reason);
         if(primaryKey == -1){
             return "error";

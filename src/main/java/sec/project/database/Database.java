@@ -98,8 +98,9 @@ public class Database {
             String query = "SELECT * FROM Users WHERE id = ?";
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setInt(1, id);
-            statement.executeUpdate();
-            statement.close();
+            statement.executeQuery();
+            ResultSet resultSet = statement.getResultSet();
+            return resultSet;
         } catch (SQLException e) {
             e.printStackTrace();
         }
